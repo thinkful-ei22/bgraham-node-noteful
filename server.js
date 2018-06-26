@@ -11,9 +11,14 @@ const app = express();
 // Create a static webserver
 app.use(express.static('public'));
 
-
 //Create PORT, which requires config.js
 const { PORT } = require('./config');
+
+//Create logger, which logs out the requested function
+const logger = require('./middleware/logger');
+
+
+app.use(logger);
 
 // Get All (and search by query)
 app.get('/api/notes', (req, res) => {
