@@ -3,8 +3,6 @@
 const express = require('express');
 
 const morgan = require('morgan');
-// Load array of notes
-const data = require('./db/notes');
 
 // Create an Express application
 const app = express();
@@ -12,8 +10,13 @@ const app = express();
 // Create a static webserver
 app.use(express.static('public'));
 
+
+app.use(express.json());
+
 //Create PORT, which requires config.js
 const { PORT } = require('./config');
+
+const noteRouter = require('./router/notes.router');
 
 //Create logger, which logs out the requested function
 const logger = morgan('dev');
@@ -21,37 +24,8 @@ const logger = morgan('dev');
 
 app.use(logger);
 
-// Get All (and search by query)
-app.get('/api/notes', (req, res) => {
 
-  // Basic JSON response (data is an array of objects)
-  // res.json(data);
-
-  const searchTerm = req.query.searchTerm;
-  if (searchTerm) {
-    let filteredList = data.filter(function(item) {
-      return item.title.includes(searchTerm);
-    });
-    res.json(filteredList);
-  } else {
-    res.json(data);
-  }
-
-
-});
-
-// Get a single item
-app.get('/api/notes/:id', (req, res) => {
-  const id = req.params.id;
-
-  
-  let note = data.find(function(item) {
-    return item.id === Number(id);
-  });
-  res.json(note);
-
-
-});
+app.use('/api', noteRouter);
 
 
 ///404 handler middleware
