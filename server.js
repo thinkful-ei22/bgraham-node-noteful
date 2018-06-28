@@ -2,6 +2,7 @@
 
 const express = require('express');
 
+const morgan = require('morgan');
 // Load array of notes
 const data = require('./db/notes');
 
@@ -15,7 +16,7 @@ app.use(express.static('public'));
 const { PORT } = require('./config');
 
 //Create logger, which logs out the requested function
-const logger = require('./middleware/logger');
+const logger = morgan('dev');
 
 
 app.use(logger);
