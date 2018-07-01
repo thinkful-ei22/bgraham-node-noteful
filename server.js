@@ -4,26 +4,21 @@ const express = require('express');
 
 const morgan = require('morgan');
 
+//Create PORT, which requires config.js
+const { PORT } = require('./config');
+const noteRouter = require('./router/notes.router');
+
 // Create an Express application
 const app = express();
+
+
+app.use(morgan('dev'));
 
 // Create a static webserver
 app.use(express.static('public'));
 
 
 app.use(express.json());
-
-//Create PORT, which requires config.js
-const { PORT } = require('./config');
-
-const noteRouter = require('./router/notes.router');
-
-//Create logger, which logs out the requested function
-const logger = morgan('dev');
-
-
-app.use(logger);
-
 
 app.use('/api', noteRouter);
 
@@ -44,8 +39,12 @@ app.use(function (err, req, res, next) {
 });
 
 // Listen for incoming connections
-app.listen(PORT, function () {
-  console.info(`Server listening on ${this.address().port}`);
-}).on('error', err => {
-  console.error(err);
-});
+if (require.main === module) {
+  app.listen(PORT, function () {
+    console.info(`Server listening on ${this.address().port}`);
+  }).on('error', err => {
+    console.error(err);
+  });
+}
+
+module.exports = app; // Export for testing
